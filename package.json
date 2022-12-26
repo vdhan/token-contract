@@ -1,0 +1,17 @@
+{
+  "name": "token-contract",
+  "version": "1.0.0",
+  "license": "GPL-3.0-or-later",
+  "author": "Vũ Đắc Hoàng Ân",
+  "scripts": {
+    "start": "hardhat node",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.js --network"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.1",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.12.4"
+  }
+}
