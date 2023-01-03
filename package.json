@@ -6,7 +6,7 @@
   "scripts": {
     "start": "hardhat node",
     "compile": "hardhat compile",
-    "test": "hardhat test --network",
+    "test": "hardhat test --network localhost",
     "deploy": "hardhat run scripts/deploy.js --network"
   },
   "devDependencies": {
