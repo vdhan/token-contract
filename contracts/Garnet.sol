@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "./IBEP20.sol";
 import "./Ownable.sol";
 
-contract BEP20Token is IBEP20, Ownable {
+contract Garnet is IBEP20, Ownable {
     string private _name;
     string private _symbol;
     uint8 private _decimals;
@@ -19,7 +19,6 @@ contract BEP20Token is IBEP20, Ownable {
         _symbol = "GNTK";
         _decimals = 10;
         _totalSupply = 10000000000 * 10 ** _decimals;
-
         _balances[msg.sender] = _totalSupply;
         emit Transfer(address(0), msg.sender, _totalSupply);
     }
@@ -48,20 +47,12 @@ contract BEP20Token is IBEP20, Ownable {
         return _balances[account];
     }
 
-    function transfer(address recipient, uint amount) external returns (bool) {
-        _transfer(_msgSender(), recipient, amount);
-        return true;
-    }
-
     function allowance(address owner, address spender) external view returns (uint) {
         return _allowances[owner][spender];
     }
 
-    function transferFrom(address sender, address recipient, uint amount) external returns (bool) {
-        address payable msgSender = _msgSender();
-
-        _transfer(sender, recipient, amount);
-        _approve(sender, msgSender, _allowances[sender][msgSender] - amount);
+    function transfer(address recipient, uint amount) external returns (bool) {
+        _transfer(_msgSender(), recipient, amount);
         return true;
     }
 
@@ -70,14 +61,22 @@ contract BEP20Token is IBEP20, Ownable {
         return true;
     }
 
+    function transferFrom(address sender, address recipient, uint amount) external returns (bool) {
+        address msgSender = _msgSender();
+        _transfer(sender, recipient, amount);
+        _approve(sender, msgSender, _allowances[sender][msgSender] - amount);
+        return true;
+    }
+
     function increaseAllowance(address spender, uint addedValue) public returns (bool) {
-        address payable msgSender = _msgSender();
+        address msgSender = _msgSender();
         _approve(msgSender, spender, _allowances[msgSender][spender] + addedValue);
         return true;
     }
 
     function decreaseAllowance(address spender, uint subtractedValue) public returns (bool) {
-        _approve(_msgSender(), spender, _allowances[_msgSender()][spender] - subtractedValue);
+        address msgSender = _msgSender();
+        _approve(msgSender, spender, _allowances[msgSender][spender] - subtractedValue);
         return true;
     }
 
@@ -86,17 +85,21 @@ contract BEP20Token is IBEP20, Ownable {
         return true;
     }
 
-    function _mint(address account, uint amount) internal {
-        require(account != address(0), "BEP20: mint to zero address");
+    function burn(uint amount) public returns (bool) {
+        _burn(_msgSender(), amount);
+        return true;
+    }
 
+    function _mint(address account, uint amount) internal {
+        require(account != address(0), "Mint to zero address");
         _totalSupply = _totalSupply + amount;
         _balances[account] = _balances[account] + amount;
         emit Transfer(address(0), account, amount);
     }
 
     function _transfer(address sender, address recipient, uint amount) internal {
-        require(sender != address(0), "BEP20: transfer from zero address");
-        require(recipient != address(0), "BEP20: transfer to zero address");
+        require(sender != address(0), "Transfer from zero address");
+        require(recipient != address(0), "Transfer to zero address");
 
         _balances[sender] = _balances[sender] - amount;
         _balances[recipient] = _balances[recipient] + amount;
@@ -104,24 +107,22 @@ contract BEP20Token is IBEP20, Ownable {
     }
 
     function _approve(address owner, address spender, uint amount) internal {
-        require(owner != address(0), "BEP20: approve from zero address");
-        require(spender != address(0), "BEP20: approve to zero address");
+        require(owner != address(0), "Approve from zero address");
+        require(spender != address(0), "Approve to zero address");
 
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
     }
 
     function _burn(address account, uint amount) internal {
-        require(account != address(0), "BEP20: burn from zero address");
-
+        require(account != address(0), "Burn from zero address");
         _balances[account] = _balances[account] - amount;
         _totalSupply = _totalSupply - amount;
         emit Transfer(account, address(0), amount);
     }
 
     function _burnFrom(address account, uint amount) internal {
-        address payable msgSender = _msgSender();
-
+        address msgSender = _msgSender();
         _burn(account, amount);
         _approve(account, msgSender, _allowances[account][msgSender] - amount);
     }

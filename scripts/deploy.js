@@ -1,8 +1,8 @@
 async function main() {
-  const CONTRACT = 'BEP20Token';
+  const CONTRACT = 'Garnet';
 
   let [deployer] = await ethers.getSigners();
-  console.log(`Account ${deployer.address} deploying "${CONTRACT}"...`);
+  console.log(`Account ${deployer.address} deploying "${CONTRACT}"`);
 
   let Contract = await ethers.getContractFactory(CONTRACT);
   let contract = await Contract.deploy();
@@ -11,5 +11,5 @@ async function main() {
 
 main().catch((error) => {
   console.error(error);
-  process.exitCode = 1;
+  process.exit(1);
 });
